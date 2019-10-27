@@ -1,6 +1,6 @@
-use pest::error::{Error, ErrorVariant, InputLocation, LineColLocation};
-use pest::iterators::Pairs;
+use pest::error::{Error, ErrorVariant, InputLocation};
 use pest_meta::parser::{self, Rule};
+use pest_meta::validator;
 use std::io;
 use std::io::Read;
 
@@ -37,28 +37,26 @@ pub fn check() {
             Rule::single_quote => "`'`".to_owned(),
             other_rule => format!("{:?}", other_rule)
         })
-    });
+    })
+        .map_err(|e| vec![e])
+        .and_then(|pairs| validator::validate_pairs(pairs.clone()));
     report_meta(meta_parsed);
 }
 
 /// Report either "success" (t) or "error" (nil) based on parse results.
-fn report_meta(result: Result<Pairs<Rule>, Error<Rule>>) {
+fn report_meta(result: Result<Vec<&str>, Vec<Error<Rule>>>) {
     match result {
         Ok(_) => println!("t"),
-        Err(error) => {
-            let pos = match error.location {
-                InputLocation::Pos(pos) => pos,
-                _ => unreachable!(),
+        Err(errors) => errors.iter().for_each(|error| {
+            let (beg, end) = match &error.location {
+                InputLocation::Pos(pos) => (pos, pos),
+                InputLocation::Span((beg, end)) => (beg, end),
             };
-            let (line, col) = match error.line_col {
-                LineColLocation::Pos((line, col)) => (line, col),
-                _ => unreachable!(),
-            };
-            let message = match error.variant {
+            let message = match &error.variant {
                 ErrorVariant::CustomError { message } => message,
                 _ => unreachable!(),
             };
-            println!("nil {} ({},{}) {}", pos, line, col, message);
-        }
+            println!("nil ({},{}) {}", beg, end, message);
+        })
     }
 }

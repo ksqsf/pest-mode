@@ -49,8 +49,8 @@ fn report_meta(result: Result<Vec<&str>, Vec<Error<Rule>>>) {
         Ok(_) => println!("t"),
         Err(errors) => errors.iter().for_each(|error| {
             let (beg, end) = match &error.location {
-                InputLocation::Pos(pos) => (pos, pos),
-                InputLocation::Span((beg, end)) => (beg, end),
+                InputLocation::Pos(pos) => (*pos, 1+*pos),
+                InputLocation::Span((beg, end)) => (*beg, *end),
             };
             let message = match &error.variant {
                 ErrorVariant::CustomError { message } => message,

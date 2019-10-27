@@ -21,7 +21,7 @@ pub fn check(rule: &str) {
         Ok(_) => {},
         Err(error) => {
             let (beg, end) = match error.location {
-                InputLocation::Pos(pos) => (pos, pos),
+                InputLocation::Pos(pos) => (pos, 1+pos),
                 InputLocation::Span((beg, end)) => (beg, end),
             };
             let message = match error.variant {

@@ -79,11 +79,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "pest_vm"
+version = "2.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+dependencies = [
+ "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pest_meta 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
 name = "pesta"
 version = "0.0.0"
 dependencies = [
  "pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
  "pest_meta 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "pest_vm 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -119,6 +129,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 "checksum opaque-debug 0.2.3 (registry+https://github.com/rust-lang/crates.io-index)" = "2839e79665f131bdb5782e51f2c6c9599c133c6098982a54c794358bf432529c"
 "checksum pest 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "7e4fb201c5c22a55d8b24fef95f78be52738e5e1361129be1b5e862ecdb6894a"
 "checksum pest_meta 2.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "df43fd99896fd72c485fe47542c7b500e4ac1e8700bf995544d1317a60ded547"
+"checksum pest_vm 2.1.0 (registry+https://github.com/rust-lang/crates.io-index)" = "5e336754c48f492b42fffaaa85e889be918a6e49c6f72a95c70b48089e414b0c"
 "checksum sha-1 0.8.1 (registry+https://github.com/rust-lang/crates.io-index)" = "23962131a91661d643c98940b20fcaffe62d776a823247be80a48fcb8b6fce68"
 "checksum typenum 1.11.2 (registry+https://github.com/rust-lang/crates.io-index)" = "6d2783fe2d6b8c1101136184eb41be8b1ad379e4657050b8aaff0c79ee7575f9"
 "checksum ucd-trie 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)" = "8f00ed7be0c1ff1e24f46c3d2af4859f7e863672ba3a6e92e7cff702bf9f06c2"

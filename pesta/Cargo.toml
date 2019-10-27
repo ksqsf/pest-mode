@@ -1,0 +1,9 @@
+[package]
+name = "pesta"
+version = "0.0.0"
+authors = ["ksqsf <i@ksqsf.moe>"]
+edition = "2018"
+
+[dependencies]
+pest = "2.1"
+pest_meta = "2.1"

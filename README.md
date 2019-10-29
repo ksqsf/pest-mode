@@ -21,6 +21,12 @@ Pest-mode features:
 
 To use the more advanced features, you must have `pesta` installed.
 
+`pesta` is now on crates.io, so just do
+
++ `cargo install pesta --force`
+
+Or, if you prefer the manual way,
+
 1. [Install the Rust toolchain](https://rustup.rs).
 2. `cd pesta && cargo build --release`
 3. Find the executable `pesta` under `target/release`, and put it in

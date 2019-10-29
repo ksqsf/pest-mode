@@ -1,8 +1,17 @@
 [package]
 name = "pesta"
-version = "0.0.0"
+version = "0.1.0"
 authors = ["ksqsf <i@ksqsf.moe>"]
 edition = "2018"
+license = "MIT"
+description = "Pest analyzer"
+homepage = "https://github.com/ksqsf/pest-mode"
+repository = "https://github.com/ksqsf/pest-mode"
+documentation = "https://docs.rs/pesta"
+include = [
+    "**/*.rs",
+    "Cargo.toml",
+]
 
 [dependencies]
 pest = "2.1"

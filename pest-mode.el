@@ -296,7 +296,6 @@ flag NO-SWITCH is non-nill."
                               for end = (string-to-number (match-string 2))
                               for msg = (match-string 3)
                               for type = :error
-                              do (message "Pest Error: %s" beg end msg)
                               collect (flymake-make-diagnostic source
                                                                beg
                                                                end

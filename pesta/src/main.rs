@@ -8,7 +8,7 @@ fn main() {
     match args[1].as_ref() {
         "meta_check" => meta::check(),
         "lang_check" => lang::check(&args[2]),
-        // "lang_structure" => lang::structure(),
+        "lang_analyze" => lang::analyze(&args[2]),
         // "lang_element_at_point" => lang::element_at_point(),
         mode => panic!("unknown mode {}", mode),
     }

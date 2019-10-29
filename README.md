@@ -25,3 +25,19 @@ To use the more advanced features, you must have `pesta` installed.
 2. `cd pesta && cargo build --release`
 3. Find the executable `pesta` under `target/release`, and put it in
    your `PATH`.
+
+## Usage
+
+If you have added `pest-mode` to `auto-mode-alist`, then it should be enabled automatically on any `.pest` file.
+
+In a `.pest` file,
+
++ `pest-test-input` (default keybinding `C-c C-t`): open a buffer to test the current grammar
++ `flymake-mode`: enable syntax checking
+
+In a testing buffer,
+
++ `pest-select-rule` (default keybinding `C-c C-r`): select the start rule for all other purposes
++ `pest-analyze-input` (default keybinding `C-c C-c`): analyze the input and report the structure
++ `flymake-mode` (enabled by default): enable syntax checking
++ `eldoc-mode` (enabled by default): enable displaying the parse tree path

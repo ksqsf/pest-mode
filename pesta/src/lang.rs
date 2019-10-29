@@ -1,3 +1,11 @@
+//! # lang
+//!
+//! This mod deals with the pest-input.
+//!
+//! Due to Emacs limitation (the pipe is closed after sending an EOF),
+//! we cannot simply read from stdin twice, so the data sent to pesta
+//! should be json-encoded in the format `[<grammar>,<input>]`.
+
 use pest::error::{ErrorVariant, InputLocation};
 use pest::iterators::Pair;
 use pest_vm::Vm;
@@ -10,16 +18,50 @@ use json::{self, JsonValue};
 enum LangMode {
     Analyze,
     Check,
+    ElementAtPoint(usize),
 }
 
+/// Analyze the input, given the grammar and the start rule.  Panics
+/// if the grammar is incorrect.  Otherwise, the parsing result will
+/// be printed to stdout.
+///
+/// Required Arguments:
+/// 1. rule: string
+///
+/// Read from stdin: `(json-encode-list (list grammar input))`
 pub fn analyze(rule: &str) {
     work(rule, LangMode::Analyze)
 }
 
+/// Check whether the input is correct against the given grammar and
+/// the start rule.  Panics if the grammar is incorrect.  Otherwise,
+/// if anything is wrong, print the errors each on a line in the
+/// format `nil (<start>,<end>) <message>`.  `start` and `end` start
+/// from 1.
+///
+/// Required Arguments:
+/// 1. rule: string
+///
+/// Read from stdin: `(json-encode-list (list grammar input))`
 pub fn check(rule: &str) {
     work(rule, LangMode::Check)
 }
 
+/// Determine the element at the current point, printing a path in a
+/// format like `rule1.rule2.rule3`.  Panics if the grammar is
+/// incorrect, or the arguments are invalid.
+///
+/// Required Arguments:
+/// 1. rule: string
+/// 2. pos: point position, in Emacs form `(point)` (starting from 1)
+///
+/// Read from stdin: `(json-encode-list (list grammar input))`
+pub fn element_at_point(rule: &str, pos: &str) {
+    let pos: usize = str::parse(pos).expect("pos must be a number");
+    work(rule, LangMode::ElementAtPoint(pos))
+}
+
+/// The actual implementation of the functions above.
 fn work(rule: &str, mode: LangMode) {
     let stdin = io::stdin();
     let mut handle = stdin.lock();
@@ -39,7 +81,6 @@ fn work(rule: &str, mode: LangMode) {
     let vm = Vm::new(optimizer::optimize(ast.clone()));
 
     let result = vm.parse(rule, &input_buf);
-
     match mode {
         LangMode::Check => match result {
             Ok(_) => {},
@@ -69,6 +110,26 @@ fn work(rule: &str, mode: LangMode) {
                 println!("{}", error.renamed_rules(|r| r.to_string()));
             }
         }
+        LangMode::ElementAtPoint(pos) => match result {
+            Ok(mut pairs) => {
+                let mut path: Vec<&str> = vec![];
+                loop {
+                    let pair = pairs.find(|pair| {
+                        let span = pair.as_span();
+                        span.start() + 1 <= pos && pos < span.end() + 1
+                    });
+                    match pair {
+                        Some(pair) => {
+                            path.push(pair.as_rule());
+                            pairs = pair.into_inner();
+                        }
+                        None => break,
+                    }
+                }
+                println!("{}", path.join("."));
+            }
+            Err(_) => {}
+        },
     }
 }
 

@@ -1,3 +1,7 @@
+//! # meta
+//!
+//! This mod deals with the grammar.
+
 use pest::error::{Error, ErrorVariant, InputLocation};
 use pest_meta::parser::{self, Rule};
 use pest_meta::validator;
@@ -5,6 +9,9 @@ use std::io;
 use std::io::Read;
 
 /// Check the meta language.
+///
+/// + Required arguments: None.
+/// + Read from stdin: verbatim grammar. (Not json-encoded.)
 pub fn check() {
     let stdin = io::stdin();
     let mut handle = stdin.lock();
@@ -44,6 +51,9 @@ pub fn check() {
 }
 
 /// Report either "success" (t) or "error" (nil) based on parse results.
+///
+/// Error Format: `[BOL]nil (<start>,<end>) <message>[EOL]`. `start`
+/// and `end` start from 1.
 fn report_meta(result: Result<Vec<&str>, Vec<Error<Rule>>>) {
     match result {
         Ok(_) => println!("t"),

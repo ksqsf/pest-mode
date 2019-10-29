@@ -41,3 +41,19 @@ In a testing buffer,
 + `pest-analyze-input` (default keybinding `C-c C-c`): analyze the input and report the structure
 + `flymake-mode` (enabled by default): enable syntax checking
 + `eldoc-mode` (enabled by default): enable displaying the parse tree path
+
+## Demo
+
+All of the following require `pesta`.
+
+### Pest-mode supports flymake!
+
+![pest-mode flymake](./screenshots/pest-flymake.gif)
+
+### The testing buffer supports both flymake and eldoc!
+
+![pest-input-mode flymake and eldoc](./screenshots/input-flymake-eldoc.gif)
+
+### Analyze
+
+![pest-input-mode analyze](./screenshots/input-analyze.gif)

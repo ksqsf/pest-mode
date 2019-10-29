@@ -5,7 +5,7 @@
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "26.3"))
 
-;; Copyright (C) 2019 ksqsf
+;; Copyright (C) 2019  ksqsf
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -39,6 +39,7 @@
 
 ;;; Code:
 
+(require 'subr-x)
 (require 'rx)
 (require 'imenu)
 (require 'flymake)
@@ -46,7 +47,7 @@
 (require 'eldoc)
 
 (eval-when-compile
-  (require 'cl))
+  (require 'cl-lib))
 
 (defvar pest--highlights
   `((,(rx (or "SOI" "EOI" "@" "+" "*" "?" "~"))         . font-lock-keyword-face)
@@ -55,10 +56,10 @@
     (,(rx (+ (or alpha "_")) (* (or (char alnum) "_"))) . font-lock-variable-name-face)))
 
 (defun pest-indent-line (&optional indent)
-  "Indent the current line according to the Pest syntax."
+  "Indent the current line according to the Pest syntax, or supply INDENT."
   (interactive "P")
   (let ((pos (- (point-max) (point)))
-        (indent (or indent (calculate-pest-indentation)))
+        (indent (or indent (pest--calculate-indentation)))
         (shift-amt nil)
         (beg (progn (beginning-of-line) (point))))
     (skip-chars-forward " \t")
@@ -72,7 +73,7 @@
       (if (> (- (point-max) pos) (point))
           (goto-char (- (point-max) pos))))))
 
-(defun calculate-pest-indentation ()
+(defun pest--calculate-indentation ()
   "Calculate the indentation of the current line."
   (let (indent)
     (save-excursion
@@ -100,14 +101,16 @@
                               "=" (* blank) (or "_{" "@{" "!{" "${" "{")))
 
 (defun pest-imenu-prev-index-position ()
-  (interactive)
+  "Jumps to the beginning of the previous rule."
   (re-search-backward pest--rule-regexp (point-min) t))
 
 (defun pest-imenu-extract-index-name ()
-  (interactive)
+  "Extract rule name here.
+Should be called right after `pest-imenu-prev-index-position'."
   (match-string-no-properties 1))
 
 (defun pest--rule-list (&optional buffer)
+  "Extract a list of all rules in the current buffer or BUFFER."
   (let ((buffer (or buffer (current-buffer))))
     (with-current-buffer buffer
       (save-excursion
@@ -129,6 +132,7 @@
 (defvar-local pest--meta-flymake-proc nil)
 
 (defun pest-flymake (report-fn &rest _args)
+  "The `flymake-diagnostic-functions' backend for pest-mode."
   (unless (executable-find "pesta")
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--meta-flymake-proc)
@@ -172,12 +176,12 @@
 
 
 
+(defvar-local pest--grammar-buffer nil)
+
 (defun pest-test-grammar ()
-  "Test the grammar in the current buffer on arbitrary input in a
-newly-created buffer, with real-time diagnosis messages."
+  "Test the grammar in the current buffer on arbitrary input in a newly-created buffer, with real-time diagnosis messages."
   (interactive)
-  (let ((grammar-buffer (current-buffer))
-        (input-buffer (switch-to-buffer-other-window "*pest-input*")))
+  (let ((grammar-buffer (current-buffer)))
     (message "Associate with grammar %s" grammar-buffer)
     (pest-input-mode)
     (setq-local pest--grammar-buffer grammar-buffer)))
@@ -197,6 +201,9 @@ newly-created buffer, with real-time diagnosis messages."
   "Keymap for Pest mode.")
 
 ;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
+
+;;;###autoload
 (define-derived-mode pest-mode prog-mode "Pest"
   "Major mode for editing Pest files.
 
@@ -211,7 +218,6 @@ newly-created buffer, with real-time diagnosis messages."
 
 (defvar-local pest--lang-flymake-proc nil)
 (defvar-local pest--lang-analyze-proc nil)
-(defvar-local pest--grammar-buffer nil)
 (defvar-local pest--selected-rule nil)
 
 (defun pest-select-rule ()
@@ -316,6 +322,7 @@ flag NO-SWITCH is non-nill."
           (process-send-eof pest--lang-flymake-proc))))))
 
 (defun pest-input-eldoc ()
+  "The `eldoc-documentation-function' for pest-input-mode."
   (unless (executable-find "pesta")
     (error "Cannot find a suitable `pesta' executable"))
   (if (null pest--selected-rule)
@@ -332,8 +339,7 @@ flag NO-SWITCH is non-nill."
           (string-trim-right (buffer-string)))))))
 
 (defvar pest-input-mode-map
-  (let ((map (make-sparse-keymap))
-        (menu-map (make-sparse-keymap "Pest")))
+  (let ((map (make-sparse-keymap)))
     (define-key map (kbd "C-c C-c") 'pest-analyze-input)
     (define-key map (kbd "C-c C-r") 'pest-select-rule)
     map))
@@ -348,3 +354,7 @@ flag NO-SWITCH is non-nill."
   (eldoc-mode))
 
 (provide 'pest-mode)
+
+(provide 'pest-mode)
+
+;;; pest-mode.el ends here

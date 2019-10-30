@@ -211,6 +211,8 @@ Should be called right after `pest-imenu-prev-index-position'."
 \\{pest-mode-map}"
   (setq-local font-lock-defaults '(pest--highlights))
   (setq-local indent-line-function #'pest-indent-line)
+  (setq-local comment-start "// ")
+  (setq-local comment-end   "")
   (setq-local imenu-prev-index-position-function #'pest-imenu-prev-index-position)
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
   (add-hook 'flymake-diagnostic-functions 'pest-flymake nil t))
@@ -345,7 +347,7 @@ flag NO-SWITCH is non-nill."
     (define-key map (kbd "C-c C-r") 'pest-select-rule)
     map))
 
-(define-derived-mode pest-input-mode prog-mode "Pest-Input"
+(define-derived-mode pest-input-mode text-mode "Pest-Input"
   "Major mode for input to test a Pest grammar file.  This mode should only be enabled with `pest-test-grammar'.
 
 \\{pest-input-mode-map}"

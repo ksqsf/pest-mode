@@ -356,6 +356,4 @@ flag NO-SWITCH is non-nill."
 
 (provide 'pest-mode)
 
-(provide 'pest-mode)
-
 ;;; pest-mode.el ends here

@@ -193,7 +193,7 @@ Should be called right after `pest-imenu-prev-index-position'."
   (let ((map (make-sparse-keymap))
         (menu-map (make-sparse-keymap "Pest")))
     (set-keymap-parent map prog-mode-map)
-    (define-key map (kbd "C-c C-t") 'pest-test-grammar)
+    (define-key map (kbd "C-c C-t") #'pest-test-grammar)
     (define-key map [menu-bar pest] (cons "Pest" menu-map))
     (define-key menu-map [test-grammar]
       '(menu-item "Test grammar" pest-test-grammar
@@ -215,7 +215,7 @@ Should be called right after `pest-imenu-prev-index-position'."
   (setq-local comment-end   "")
   (setq-local imenu-prev-index-position-function #'pest-imenu-prev-index-position)
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
-  (add-hook 'flymake-diagnostic-functions 'pest-flymake nil t))
+  (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t))
 
 
 
@@ -343,8 +343,8 @@ flag NO-SWITCH is non-nill."
 
 (defvar pest-input-mode-map
   (let ((map (make-sparse-keymap)))
-    (define-key map (kbd "C-c C-c") 'pest-analyze-input)
-    (define-key map (kbd "C-c C-r") 'pest-select-rule)
+    (define-key map (kbd "C-c C-c") #'pest-analyze-input)
+    (define-key map (kbd "C-c C-r") #'pest-select-rule)
     map))
 
 (define-derived-mode pest-input-mode text-mode "Pest-Input"
@@ -352,7 +352,7 @@ flag NO-SWITCH is non-nill."
 
 \\{pest-input-mode-map}"
   (setq-local eldoc-documentation-function #'pest-input-eldoc)
-  (add-hook 'flymake-diagnostic-functions 'pest-input-flymake nil t)
+  (add-hook 'flymake-diagnostic-functions #'pest-input-flymake nil t)
   (flymake-mode)
   (eldoc-mode))
 

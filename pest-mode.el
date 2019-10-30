@@ -181,7 +181,8 @@ Should be called right after `pest-imenu-prev-index-position'."
 (defun pest-test-grammar ()
   "Test the grammar in the current buffer on arbitrary input in a newly-created buffer, with real-time diagnosis messages."
   (interactive)
-  (let ((grammar-buffer (current-buffer)))
+  (let ((grammar-buffer (current-buffer))
+        (input-buffer (switch-to-buffer-other-window "*pest-input*")))
     (message "Associate with grammar %s" grammar-buffer)
     (pest-input-mode)
     (setq-local pest--grammar-buffer grammar-buffer)))

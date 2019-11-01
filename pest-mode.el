@@ -46,14 +46,21 @@
 (require 'json)
 (require 'eldoc)
 
-(eval-when-compile
-  (require 'cl-lib))
+(eval-when-compile (require 'cl-lib))
 
 (defvar pest--highlights
-  `((,(rx (or "SOI" "EOI" "@" "+" "*" "?" "~"))         . font-lock-keyword-face)
-    (,(rx "//" (* nonl) eol)                            . font-lock-comment-face)
-    (,(rx "'" (char alpha) "'")                         . font-lock-string-face)
+  `((,(rx "'" (char alpha) "'")                         . font-lock-string-face)
+    (,(rx (or "SOI" "EOI" "@" "+" "*" "?" "~"))         . font-lock-keyword-face)
     (,(rx (+ (or alpha "_")) (* (or (char alnum) "_"))) . font-lock-variable-name-face)))
+
+(defconst pest-mode-syntax-table
+  (let ((table (make-syntax-table)))
+    (modify-syntax-entry ?' "\"" table)
+    (modify-syntax-entry ?\" "\"" table)
+
+    (modify-syntax-entry ?/ ". 12" table)
+    (modify-syntax-entry ?\n ">" table)
+    table))
 
 (defun pest-indent-line (&optional indent)
   "Indent the current line according to the Pest syntax, or supply INDENT."
@@ -201,6 +208,12 @@ Should be called right after `pest-imenu-prev-index-position'."
     map)
   "Keymap for Pest mode.")
 
+(defun pest-font-lock-syntactic-face-function (state)
+  "Return syntactic face given STATE."
+  (if (nth 3 state)
+      font-lock-string-face
+    font-lock-comment-face))
+
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
 
@@ -209,10 +222,14 @@ Should be called right after `pest-imenu-prev-index-position'."
   "Major mode for editing Pest files.
 
 \\{pest-mode-map}"
-  (setq-local font-lock-defaults '(pest--highlights))
+  :syntax-table pest-mode-syntax-table
+  (setq-local font-lock-defaults
+              '(pest--highlights
+                nil nil nil nil
+                (font-lock-syntactic-face-function . pest-font-lock-syntactic-face-function)))
   (setq-local indent-line-function #'pest-indent-line)
   (setq-local comment-start "// ")
-  (setq-local comment-end   "")
+  (setq-local comment-end "")
   (setq-local imenu-prev-index-position-function #'pest-imenu-prev-index-position)
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
   (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t))

@@ -214,6 +214,40 @@ Should be called right after `pest-imenu-prev-index-position'."
       font-lock-string-face
     font-lock-comment-face))
 
+
+
+(defun pest--xref-backend () 'pest)
+
+(defun pest--xref-make-xref (type symbol file &optional summary)
+  "Return an xref for TYPE SYMBOL in FILE.
+TYPE must be a type in `find-function-regexp-alist' (use nil for
+'defun).  If SUMMARY is non-nil, use it for the summary;
+otherwise build the summary from TYPE and SYMBOL."
+  ;; TODO
+  )
+
+(cl-defmethod xref-backend-definitions ((_backend (eql pest)) identifier)
+  ;; TODO
+  )
+
+(cl-defmethod xref-backend-apropos ((_backend (eql pest)) regexp)
+  ;; TODO
+  )
+
+(cl-defmethod xref-backend-identifier-completion-table ((_backend (eql pest)))
+  ;; TODO
+  )
+
+;; (cl-defmethod xref-location-marker ((l xref-pest-location))
+;;   ;; TODO
+;;   )
+
+;; (cl-defmethod xref-location-group ((l xref-pest-location))
+;;   ;; TODO
+;;   )
+
+
+
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
 
@@ -232,7 +266,8 @@ Should be called right after `pest-imenu-prev-index-position'."
   (setq-local comment-end "")
   (setq-local imenu-prev-index-position-function #'pest-imenu-prev-index-position)
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
-  (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t))
+  (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t)
+  (add-hook 'xref-backend-functions #'pest--xref-backend))
 
 
 

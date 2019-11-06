@@ -42,8 +42,11 @@ Or, if you prefer the manual way,
 
 1. [Install the Rust toolchain](https://rustup.rs).
 2. `cd pesta && cargo build --release`
-3. Find the executable `pesta` under `target/release`, and put it in
-   your `PATH`.
+3. Find the executable `pesta` under `target/release`, and
+   (optionally) put it in your `PATH`.
+
+Note: you have to customize `pest-pesta-executable` if `pesta` is not
+in your `PATH`.
 
 ## Usage
 

@@ -48,6 +48,17 @@
 
 (eval-when-compile (require 'cl-lib))
 
+(defgroup pest-mode nil
+  "Pest-mode options."
+  :group 'pest-mode)
+
+(defcustom pest-pesta-executable
+  (executable-find "pesta")
+  "Location of pesta executable."
+  :type 'file)
+
+
+
 (defvar pest--highlights
   `((,(rx "'" (char alpha) "'")                         . font-lock-string-face)
     (,(rx (or "SOI" "EOI" "@" "+" "*" "?" "~"))         . font-lock-keyword-face)
@@ -140,7 +151,7 @@ Should be called right after `pest-imenu-prev-index-position'."
 
 (defun pest-flymake (report-fn &rest _args)
   "The `flymake-diagnostic-functions' backend for pest-mode."
-  (unless (executable-find "pesta")
+  (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--meta-flymake-proc)
     (kill-process pest--meta-flymake-proc))
@@ -153,7 +164,7 @@ Should be called right after `pest-imenu-prev-index-position'."
              :noquery t
              :connection-type 'pipe
              :buffer (generate-new-buffer " *pest-meta-flymake*")
-             :command '("pesta" "meta_check")
+             :command `(,pest-pesta-executable "meta_check")
              :sentinel
              (lambda (proc _event)
                (when (eq 'exit (process-status proc))
@@ -290,7 +301,7 @@ otherwise build the summary from TYPE and SYMBOL."
 By default, you'll be directed to the analysis report, unless the
 flag NO-SWITCH is non-nill."
   (interactive)
-  (unless (executable-find "pesta")
+  (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--lang-analyze-proc)
     (kill-process pest--lang-analyze-proc))
@@ -308,7 +319,7 @@ flag NO-SWITCH is non-nill."
              :noquery t
              :connection-type 'pipe
              :buffer output
-             :command `("pesta" "lang_analyze" ,selected-rule)
+             :command `(,pest-pesta-executable "lang_analyze" ,selected-rule)
              :sentinel
              (lambda (proc _event)
                (when (eq 'exit (process-status proc))
@@ -327,7 +338,7 @@ flag NO-SWITCH is non-nill."
 
 (defun pest-input-flymake (report-fn &rest _args)
   "Check and give diagnosis messages about the input."
-  (unless (executable-find "pesta")
+  (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--lang-flymake-proc)
     (kill-process pest--lang-flymake-proc))
@@ -342,7 +353,7 @@ flag NO-SWITCH is non-nill."
                :noquery t
                :connection-type 'pipe
                :buffer (generate-new-buffer " *pest-input-flymake*")
-               :command `("pesta" "lang_check" ,pest--selected-rule)
+               :command `(,pest-pesta-executable "lang_check" ,pest--selected-rule)
                :sentinel
                (lambda (proc _event)
                  (when (eq 'exit (process-status proc))
@@ -378,7 +389,7 @@ flag NO-SWITCH is non-nill."
 
 (defun pest-input-eldoc ()
   "The `eldoc-documentation-function' for pest-input-mode."
-  (unless (executable-find "pesta")
+  (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (if (null pest--selected-rule)
       (message "You haven't selected a start rule; do so with `pest-select-rule'")
@@ -388,7 +399,7 @@ flag NO-SWITCH is non-nill."
              (grammar (with-current-buffer pest--grammar-buffer (buffer-string)))
              (pos (save-restriction (widen) (point))))
         (with-temp-buffer
-          (call-process-region (json-encode-list (list grammar source)) nil "pesta"
+          (call-process-region (json-encode-list (list grammar source)) nil pest-pesta-executable
                                nil (current-buffer) nil
                                "lang_point" selected-rule (number-to-string pos))
           (string-trim-right (buffer-string)))))))

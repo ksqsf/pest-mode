@@ -12,12 +12,25 @@ Pest-mode features:
 
 ## Installation
 
+### pest-mode
+
 `pest-mode` is not on any package archive yet.  You must manually download the file and put it in your `load-path`, and write in your config file:
 
 ```emacs-lisp
 (autoload 'pest-mode "pest-mode")
 (add-to-list #'auto-mode-alist '("\\.pest\\'" . pest-mode))
 ```
+
+If you use `use-package` and `quelpa`, life is easier:
+
+```emacs-lisp
+(use-package pest-mode
+  :quelpa (pest-mode :fetcher github :repo "ksqsf/pest-mode")
+  :mode "\\.pest\\'"
+  :hook (pest-mode . flymake-mode))
+```
+
+### pesta
 
 To use the more advanced features, you must have `pesta` installed.
 

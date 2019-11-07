@@ -293,7 +293,9 @@ otherwise build the summary from TYPE and SYMBOL."
     (error "This buffer is not associated with a Pest grammar!"))
   (let* ((rules (pest--rule-list pest--grammar-buffer))
          (rule (completing-read "Start rule: " rules nil t)))
-    (setq-local pest--selected-rule rule)))
+    (if (memq rule rules)
+        (setq-local pest--selected-rule rule)
+      (error "You must select a valid rule!"))))
 
 (defun pest-analyze-input (&optional no-switch)
   "Analyze the input and show a report of the parsing result in a new buffer.

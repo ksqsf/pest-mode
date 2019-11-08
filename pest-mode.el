@@ -118,6 +118,10 @@
                               (* blank)
                               "=" (* blank) (or "_{" "@{" "!{" "${" "{")))
 
+(defun pest--match-rule-name ()
+  "Extract the rule name from last match."
+  (match-string-no-properties 1))
+
 (defun pest-imenu-prev-index-position ()
   "Jumps to the beginning of the previous rule."
   (re-search-backward pest--rule-regexp (point-min) t))
@@ -125,7 +129,7 @@
 (defun pest-imenu-extract-index-name ()
   "Extract rule name here.
 Should be called right after `pest-imenu-prev-index-position'."
-  (match-string-no-properties 1))
+  (pest--match-rule-name))
 
 (defun pest--rule-list (&optional buffer)
   "Extract a list of all rules in the current buffer or BUFFER."
@@ -137,7 +141,7 @@ Should be called right after `pest-imenu-prev-index-position'."
           (goto-char (point-min))
           (cl-loop
            while (re-search-forward pest--rule-regexp nil t)
-           collect (match-string-no-properties 1)))))))
+           collect (pest--match-rule-name)))))))
 
 
 
@@ -229,33 +233,15 @@ Should be called right after `pest-imenu-prev-index-position'."
 
 (defun pest--xref-backend () 'pest)
 
-(defun pest--xref-make-xref (type symbol file &optional summary)
-  "Return an xref for TYPE SYMBOL in FILE.
-TYPE must be a type in `find-function-regexp-alist' (use nil for
-'defun).  If SUMMARY is non-nil, use it for the summary;
-otherwise build the summary from TYPE and SYMBOL."
-  ;; TODO
-  )
-
 (cl-defmethod xref-backend-definitions ((_backend (eql pest)) identifier)
-  ;; TODO
-  )
-
-(cl-defmethod xref-backend-apropos ((_backend (eql pest)) regexp)
-  ;; TODO
-  )
-
-(cl-defmethod xref-backend-identifier-completion-table ((_backend (eql pest)))
-  ;; TODO
-  )
-
-;; (cl-defmethod xref-location-marker ((l xref-pest-location))
-;;   ;; TODO
-;;   )
-
-;; (cl-defmethod xref-location-group ((l xref-pest-location))
-;;   ;; TODO
-;;   )
+  (save-excursion
+    (goto-char (point-min))
+    (cl-loop
+     while (re-search-forward pest--rule-regexp nil t 1)
+     if (string= identifier (pest--match-rule-name))
+     collect (xref-make (pest--match-rule-name)
+                        (xref-make-buffer-location (current-buffer)
+                                                   (match-beginning 0))))))
 
 
 

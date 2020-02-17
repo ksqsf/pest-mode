@@ -279,7 +279,7 @@ Should be called right after `pest-imenu-prev-index-position'."
     (error "This buffer is not associated with a Pest grammar!"))
   (let* ((rules (pest--rule-list pest--grammar-buffer))
          (rule (completing-read "Start rule: " rules nil t)))
-    (if (memq rule rules)
+    (if (member rule rules)
         (setq-local pest--selected-rule rule)
       (error "You must select a valid rule!"))))
 

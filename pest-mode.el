@@ -45,6 +45,7 @@
 (require 'flymake)
 (require 'json)
 (require 'eldoc)
+(require 'xref)
 
 (eval-when-compile (require 'cl-lib))
 
@@ -154,7 +155,9 @@ Should be called right after `pest-imenu-prev-index-position'."
 (defvar-local pest--meta-flymake-proc nil)
 
 (defun pest-flymake (report-fn &rest _args)
-  "The `flymake-diagnostic-functions' backend for pest-mode."
+  "The `flymake-diagnostic-functions' backend for pest-mode.
+
+REPORT-FN will be called whenever diagnoses are available."
   (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--meta-flymake-proc)
@@ -231,7 +234,9 @@ Should be called right after `pest-imenu-prev-index-position'."
 
 
 
-(defun pest--xref-backend () 'pest)
+(defun pest--xref-backend ()
+  "Return the xref backend identifier for pest."
+  'pest)
 
 (cl-defmethod xref-backend-definitions ((_backend (eql pest)) identifier)
   (save-excursion
@@ -325,7 +330,9 @@ flag NO-SWITCH is non-nill."
         (process-send-eof pest--lang-analyze-proc)))))
 
 (defun pest-input-flymake (report-fn &rest _args)
-  "Check and give diagnosis messages about the input."
+  "Check and give diagnostic messages about the input.
+
+REPORT-FN will be called whenever diagnoses are available."
   (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (when (process-live-p pest--lang-flymake-proc)

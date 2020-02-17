@@ -50,13 +50,14 @@
 (eval-when-compile (require 'cl-lib))
 
 (defgroup pest-mode nil
-  "Pest-mode options."
-  :group 'pest-mode)
+  "Support for Pest grammar files."
+  :group 'languages)
 
 (defcustom pest-pesta-executable
   (executable-find "pesta")
   "Location of pesta executable."
-  :type 'file)
+  :type 'file
+  :group 'pest-mode)
 
 
 

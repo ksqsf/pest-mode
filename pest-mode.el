@@ -156,7 +156,7 @@ Should be called right after `pest-imenu-prev-index-position'."
 (defvar-local pest--meta-flymake-proc nil)
 
 (defun pest-flymake (report-fn &rest _args)
-  "The `flymake-diagnostic-functions' backend for pest-mode.
+  "The `flymake-diagnostic-functions' backend for `pest-mode'.
 
 REPORT-FN will be called whenever diagnoses are available."
   (unless pest-pesta-executable
@@ -384,7 +384,7 @@ REPORT-FN will be called whenever diagnoses are available."
           (process-send-eof pest--lang-flymake-proc))))))
 
 (defun pest-input-eldoc ()
-  "The `eldoc-documentation-function' for pest-input-mode."
+  "The `eldoc-documentation-function' for `pest-input-mode'."
   (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))
   (if (null pest--selected-rule)

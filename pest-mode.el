@@ -134,15 +134,14 @@ Should be called right after `pest-imenu-prev-index-position'."
 
 (defun pest--rule-list (&optional buffer)
   "Extract a list of all rules in the current buffer or BUFFER."
-  (let ((buffer (or buffer (current-buffer))))
-    (with-current-buffer buffer
-      (save-excursion
-        (save-restriction
-          (widen)
-          (goto-char (point-min))
-          (cl-loop
-           while (re-search-forward pest--rule-regexp nil t)
-           collect (pest--match-rule-name)))))))
+  (with-current-buffer (or buffer (current-buffer))
+    (save-excursion
+      (save-restriction
+        (widen)
+        (goto-char (point-min))
+        (cl-loop
+         while (re-search-forward pest--rule-regexp nil t)
+         collect (pest--match-rule-name))))))
 
 
 

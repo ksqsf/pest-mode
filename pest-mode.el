@@ -269,7 +269,8 @@ REPORT-FN will be called whenever diagnoses are available."
 
 ;;;###autoload
 (add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
-
+;;;###autoload
+(add-to-list 'interpreter-mode-alist '("pest" . pest-mode))
 
 
 

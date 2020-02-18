@@ -24,25 +24,22 @@
 
 ;; This package provides GNU Emacs major modes for editing Pest
 ;; grammar files.  Currently, it supports syntax highlighting,
-;; indentation, imenu integration, and flymake support (requires
-;; the `pesta' program).
+;; indentation, imenu integration (requires the `pesta' program)
 
 ;; Also, you can use `pest-test-grammar' to open a new buffer, in
-;; which you can experiment with your language defined by the grammar.
-;; The input will be automatically checked against your grammar if
-;; `flymake-mode' is enabled.  In this new buffer, you can use
-;; `pest-analyze-input' (default keybinding: C-c C-c) to analyze the
-;; input, which will give you an analysis report of the structure.
-;; Also, if `eldoc-mode' is enabled, put the point anywhere under an
-;; grammatical element, a path on the parse tree will be shown in the
-;; minibuffer.
+;; which you can experiment with your language defined by the
+;; grammar.  In this new buffer, you can use `pest-analyze-input'
+;; (default keybinding: C-c C-c) to analyze the input, which will
+;; give you an analysis report of the structure.  Also, if
+;; `eldoc-mode' is enabled, put the point anywhere under an
+;; grammatical element, a path on the parse tree will be shown in
+;; the minibuffer.
 
 ;;; Code:
 
 (require 'subr-x)
 (require 'rx)
 (require 'imenu)
-(require 'flymake)
 (require 'json)
 (require 'eldoc)
 (require 'xref)
@@ -147,61 +144,6 @@ Should be called right after `pest-imenu-prev-index-position'."
 
 
 
-(defvar pest--diagnosis-regexp (rx bol
-                                   "nil "
-                                   "(" (group (+ (char digit))) "," (group (+ (char digit))) ") "
-                                   (group (* nonl))
-                                   eol))
-
-(defvar-local pest--meta-flymake-proc nil)
-
-(defun pest-flymake (report-fn &rest _args)
-  "The `flymake-diagnostic-functions' backend for `pest-mode'.
-
-REPORT-FN will be called whenever diagnoses are available."
-  (unless pest-pesta-executable
-    (error "Cannot find a suitable `pesta' executable"))
-  (when (process-live-p pest--meta-flymake-proc)
-    (kill-process pest--meta-flymake-proc))
-  (let ((source (current-buffer)))
-    (save-restriction
-      (widen)
-      (setq pest--meta-flymake-proc
-            (make-process
-             :name "pest-meta-flymake"
-             :noquery t
-             :connection-type 'pipe
-             :buffer (generate-new-buffer " *pest-meta-flymake*")
-             :command `(,pest-pesta-executable "meta_check")
-             :sentinel
-             (lambda (proc _event)
-               (when (eq 'exit (process-status proc))
-                 (unwind-protect
-                     (if (with-current-buffer source (eq proc pest--meta-flymake-proc))
-                         (with-current-buffer (process-buffer proc)
-                           (goto-char (point-min))
-                           (cl-loop
-                            while (search-forward-regexp pest--diagnosis-regexp
-                                                         nil t)
-                            for msg = (match-string 3)
-                            for beg = (string-to-number (match-string 1))
-                            for end = (string-to-number (match-string 2))
-                            for type = :error
-                            collect (flymake-make-diagnostic source
-                                                             beg
-                                                             end
-                                                             type
-                                                             msg)
-                            into diags
-                            finally (funcall report-fn diags)))
-                       (flymake-log :warning "Canceling obsolete check %s"
-                                    proc))
-                   (kill-buffer (process-buffer proc)))))))
-      (process-send-region pest--meta-flymake-proc (point-min) (point-max))
-      (process-send-eof pest--meta-flymake-proc))))
-
-
-
 (defvar-local pest--grammar-buffer nil)
 
 (defun pest-test-grammar ()
@@ -269,12 +211,10 @@ REPORT-FN will be called whenever diagnoses are available."
   (setq-local comment-end "")
   (setq-local imenu-prev-index-position-function #'pest-imenu-prev-index-position)
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
-  (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t)
   (add-hook 'xref-backend-functions #'pest--xref-backend))
 
 
 
-(defvar-local pest--lang-flymake-proc nil)
 (defvar-local pest--lang-analyze-proc nil)
 (defvar-local pest--selected-rule nil)
 
@@ -330,59 +270,6 @@ flag NO-SWITCH is non-nill."
         (process-send-string pest--lang-analyze-proc data-to-send)
         (process-send-eof pest--lang-analyze-proc)))))
 
-(defun pest-input-flymake (report-fn &rest _args)
-  "Check and give diagnostic messages about the input.
-
-REPORT-FN will be called whenever diagnoses are available."
-  (unless pest-pesta-executable
-    (error "Cannot find a suitable `pesta' executable"))
-  (when (process-live-p pest--lang-flymake-proc)
-    (kill-process pest--lang-flymake-proc))
-  (if (null pest--selected-rule)
-      (message "You haven't selected a rule to start; do so with `pest-select-rule'.")
-    (let ((source (current-buffer)))
-      (save-restriction
-        (widen)
-        (setq pest--lang-flymake-proc
-              (make-process
-               :name "pest-input-flymake"
-               :noquery t
-               :connection-type 'pipe
-               :buffer (generate-new-buffer " *pest-input-flymake*")
-               :command `(,pest-pesta-executable "lang_check" ,pest--selected-rule)
-               :sentinel
-               (lambda (proc _event)
-                 (when (eq 'exit (process-status proc))
-                   (unwind-protect
-                       (if (with-current-buffer source (eq proc pest--lang-flymake-proc))
-                           (with-current-buffer (process-buffer proc)
-                             (goto-char (point-min))
-                             (cl-loop
-                              while (search-forward-regexp pest--diagnosis-regexp
-                                                           nil t)
-                              for beg = (string-to-number (match-string 1))
-                              for end = (string-to-number (match-string 2))
-                              for msg = (match-string 3)
-                              for type = :error
-                              collect (flymake-make-diagnostic source
-                                                               beg
-                                                               end
-                                                               type
-                                                               msg)
-                              into diags
-                              finally (funcall report-fn diags)))
-                         (flymake-log :warning "Canceling obsolete check %s"
-                                      proc))
-                     (kill-buffer (process-buffer proc)))))))
-        (let* ((grammar (with-current-buffer pest--grammar-buffer
-                          (save-restriction
-                            (widen)
-                            (buffer-string))))
-               (input (buffer-string))
-               (send-data (json-encode-list (list grammar input))))
-          (process-send-string pest--lang-flymake-proc send-data)
-          (process-send-eof pest--lang-flymake-proc))))))
-
 (defun pest-input-eldoc ()
   "The `eldoc-documentation-function' for `pest-input-mode'."
   (unless pest-pesta-executable
@@ -411,8 +298,6 @@ REPORT-FN will be called whenever diagnoses are available."
 
 \\{pest-input-mode-map}"
   (setq-local eldoc-documentation-function #'pest-input-eldoc)
-  (add-hook 'flymake-diagnostic-functions #'pest-input-flymake nil t)
-  (flymake-mode)
   (eldoc-mode))
 
 (provide 'pest-mode)

@@ -250,9 +250,6 @@ REPORT-FN will be called whenever diagnoses are available."
 
 
 ;;;###autoload
-(add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
-
-;;;###autoload
 (define-derived-mode pest-mode prog-mode "Pest"
   "Major mode for editing Pest files.
 
@@ -269,6 +266,10 @@ REPORT-FN will be called whenever diagnoses are available."
   (setq-local imenu-extract-index-name-function #'pest-imenu-extract-index-name)
   (add-hook 'flymake-diagnostic-functions #'pest-flymake nil t)
   (add-hook 'xref-backend-functions #'pest--xref-backend))
+
+;;;###autoload
+(add-to-list 'auto-mode-alist '("\\.pest\\'" . pest-mode))
+
 
 
 

@@ -86,12 +86,11 @@
     (if (null indent)
         (goto-char (- (point-max) pos))
       (setq shift-amt (- indent (current-column)))
-      (if (zerop shift-amt)
-          nil
+      (unless (zerop shift-amt)
         (delete-region beg (point))
         (indent-to indent))
-      (if (> (- (point-max) pos) (point))
-          (goto-char (- (point-max) pos))))))
+      (when (> (- (point-max) pos) (point))
+        (goto-char (- (point-max) pos))))))
 
 (defun pest--calculate-indentation ()
   "Calculate the indentation of the current line."

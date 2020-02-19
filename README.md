@@ -8,7 +8,7 @@ Pest-mode features:
 * Imenu integration
 * xref integration
 * Eldoc integration (requires `pesta`)
-* Flymake integration for syntax checking (requires `pesta`)
+* Flymake/flycheck integration for syntax checking (requires `pesta`)
 * Language studio, where you can experiment the grammar (requires `pesta`)
 
 ## Installation

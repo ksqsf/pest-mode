@@ -3,7 +3,7 @@
 ;; Copyright (C) 2019-2020  ksqsf, Naoya Yamashita
 
 ;; Author: ksqsf <i@ksqsf.moe>
-;; Author: Naoya Yamashita <conao3@gmail.com>
+;;         Naoya Yamashita <conao3@gmail.com>
 ;; URL: https://github.com/ksqsf/pest-mode
 ;; Keywords: languages flymake
 ;; Version: 0.1

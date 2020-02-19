@@ -1,12 +1,12 @@
 ;;; pest-mode.el --- Major mode for editing Pest files -*- lexical-binding: t; -*-
 
+;; Copyright (C) 2019-2020  ksqsf
+
 ;; Author: ksqsf <i@ksqsf.moe>
 ;; URL: https://github.com/ksqsf/pest-mode
 ;; Keywords: languages
 ;; Version: 0.1
 ;; Package-Requires: ((emacs "26.3"))
-
-;; Copyright (C) 2019  ksqsf
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

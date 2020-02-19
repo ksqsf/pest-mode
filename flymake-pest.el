@@ -1,7 +1,8 @@
 ;;; flymake-pest.el --- A flymake handler for Pest files  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020 Naoya Yamashita
+;; Copyright (C) 2019-2020  ksqsf, Naoya Yamashita
 
+;; Author: ksqsf <i@ksqsf.moe>
 ;; Author: Naoya Yamashita <conao3@gmail.com>
 ;; URL: https://github.com/ksqsf/pest-mode
 ;; Keywords: languages flymake

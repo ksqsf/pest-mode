@@ -1,6 +1,6 @@
 ;;; flycheck-pest.el --- Flycheck integration for Pest --*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020 Naoya Yamashita
+;; Copyright (C) 2020  Naoya Yamashita
 
 ;; Author: Naoya Yamashita <conao3@gmail.com>
 ;; URL: https://github.com/ksqsf/pest-mode

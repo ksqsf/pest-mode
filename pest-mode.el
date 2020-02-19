@@ -25,7 +25,9 @@
 
 ;; This package provides GNU Emacs major modes for editing Pest
 ;; grammar files.  Currently, it supports syntax highlighting,
-;; indentation, imenu integration (requires the `pesta' program)
+;; indentation, imenu integration.
+
+;; Syntax checking is available from flymake-pest or flycheck-pest.
 
 ;; Also, you can use `pest-test-grammar' to open a new buffer, in
 ;; which you can experiment with your language defined by the

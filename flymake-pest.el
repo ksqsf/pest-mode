@@ -7,7 +7,7 @@
 ;; URL: https://github.com/ksqsf/pest-mode
 ;; Keywords: languages flymake
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.3"))
+;; Package-Requires: ((emacs "26.3") (pest-mode "0.1"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -152,7 +152,7 @@ REPORT-FN will be called whenever diagnoses are available."
 
 ;;;###autoload
 (defun flymake-pest-input-setup ()
-  "Setup pest-input-mode."
+  "Setup `pest-input-mode'."
   (add-hook 'flymake-diagnostic-functions #'flymake-pest-input nil t))
 
 (provide 'flymake-pest)

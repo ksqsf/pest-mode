@@ -6,7 +6,7 @@
 ;; URL: https://github.com/ksqsf/pest-mode
 ;; Keywords: convenience flycheck
 ;; Version: 0.1
-;; Package-Requires: ((emacs "26.3") (flycheck "31"))
+;; Package-Requires: ((emacs "26.3") (flycheck "31") (pest-mode "0.1"))
 
 ;; This program is free software: you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by

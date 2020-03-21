@@ -222,9 +222,9 @@ Should be called right after `pest-imenu-prev-index-position'."
 (defvar-local pest--selected-rule nil)
 
 (defun pest-select-rule ()
-  "Select a rule for furthur analysis."
+  "Select a rule for further analysis."
   (interactive)
-  (when (null pest--grammar-buffer)
+  (unless pest--grammar-buffer
     (error "This buffer is not associated with a Pest grammar!"))
   (let* ((rules (pest--rule-list pest--grammar-buffer))
          (rule (completing-read "Start rule: " rules nil t)))
@@ -236,7 +236,7 @@ Should be called right after `pest-imenu-prev-index-position'."
   "Analyze the input and show a report of the parsing result in a new buffer.
 
 By default, you'll be directed to the analysis report, unless the
-flag NO-SWITCH is non-nill."
+flag NO-SWITCH is non-nil."
   (interactive)
   (unless pest-pesta-executable
     (error "Cannot find a suitable `pesta' executable"))

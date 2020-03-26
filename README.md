@@ -13,9 +13,14 @@ Pest-mode features:
 
 ## Installation
 
+`pest-mode`, `flymake-pest`, and `flycheck-pest` are now on MELPA.
+
++ Just `M-x package-install` both `pest-mode` and `flymake-pest`.
++ Install `pesta` (see below).
+
 ### pest-mode
 
-`pest-mode` is not on any package archive yet.  You must manually download the file and put it in your `load-path`, and write in your config file:
+To manually install `pest-mode`, download the file and put it in your `load-path`, and write in your config file:
 
 ```emacs-lisp
 (autoload 'pest-mode "pest-mode")

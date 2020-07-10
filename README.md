@@ -2,6 +2,8 @@
 
 Pest mode provides a major mode for editing Pest files.  It also contains a few advanced features.
 
+Current stable version: 0.1.
+
 Pest-mode features:
 * Syntax highlighting
 * Indentation

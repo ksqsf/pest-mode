@@ -117,7 +117,11 @@
 (defvar pest--rule-regexp (rx bol
                               (group (+ (or alpha "_") (* (or (char alnum) "_"))))
                               (* blank)
-                              "=" (* blank) (or "_{" "@{" "!{" "${" "{")))
+                              "=" (* blank) (or (and "_" (* blank) "{")
+                                                (and "@" (* blank) "{")
+                                                (and "!" (* blank) "{")
+                                                (and "$" (* blank) "{")
+                                                "{")))
 
 (defun pest--match-rule-name ()
   "Extract the rule name from last match."

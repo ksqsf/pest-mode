@@ -106,10 +106,8 @@
                              (re-search-backward "|" paren-start-pos t)))))
         (unless (= depth 0)
           (setq indent base)
-          (if (looking-at "\\s)")
-              (setq indent (- base 4))
-            (if (null rule-sep)
-              (setq indent (+ 2 base)))))))
+          (when (looking-at "\\s)")
+            (setq indent (- base 4))))))
     indent))
 
 

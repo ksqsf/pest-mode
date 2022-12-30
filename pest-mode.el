@@ -101,15 +101,16 @@
              (depth (car ppss))
              (paren-start-pos (cadr ppss))
              (base (* 4 depth))
+             (rule-sep-limit (max paren-start-pos (line-beginning-position)))
              (rule-sep (save-excursion
                          (or (looking-at "|")
-                             (re-search-backward "|" paren-start-pos t)))))
+                             (re-search-backward "|" rule-sep-limit t)))))
         (unless (= depth 0)
           (setq indent base)
           (if (looking-at "\\s)")
               (setq indent (- base 4))
-            (if (null rule-sep)
-              (setq indent (+ 2 base)))))))
+            (if rule-sep
+              (setq indent (- base 2)))))))
     indent))
 
 

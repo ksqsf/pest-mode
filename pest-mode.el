@@ -99,7 +99,8 @@
       (back-to-indentation)
       (let* ((ppss (syntax-ppss))
              (depth (car ppss))
-             (paren-start-pos (cadr ppss))
+             (paren-start-pos (or (cadr ppss)
+                                  (line-beginning-position)))
              (base (* 4 depth))
              (rule-sep-limit (max paren-start-pos (line-beginning-position)))
              (rule-sep (save-excursion
